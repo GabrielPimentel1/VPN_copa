@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coração para Maria Clara</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+        }
+
+        .container {
+            position: relative;
+            text-align: center;
+        }
+
+        /* Mensagem inicial */
+        .mensagem-inicial {
+            color: white;
+            font-size: 24px;
+            margin-bottom: 30px;
+            opacity: 1;
+            transition: opacity 0.5s;
+        }
+
+        .mensagem-inicial.esconder {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Botão iniciar */
+        .botao-iniciar {
+            padding: 20px 40px;
+            background: white;
+            color: #764ba2;
+            border: none;
+            border-radius: 50px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .botao-iniciar:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            background: #ff0844;
+            color: white;
+        }
+
+        /* SVG Container */
+        .svg-container {
+            position: relative;
+            display: none;
+        }
+
+        .svg-container.ativo {
+            display: block;
+        }
+
+        svg {
+            filter: drop-shadow(0 0 20px rgba(255, 8, 68, 0.5));
+        }
+
+        .coracao-path {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: desenhar 3s ease-out forwards;
+            animation-play-state: paused;
+        }
+
+        .coracao-path.animar {
+            animation-play-state: running;
+        }
+
+        @keyframes desenhar {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        /* Texto dentro do coração */
+        .texto-coracao {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            text-align: center;
+            opacity: 0;
+            z-index: 10;
+        }
+
+        .texto-coracao.mostrar {
+            animation: aparecer 1s ease-out forwards;
+            animation-delay: 3s;
+        }
+
+        .nome {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .sobrenome {
+            font-size: 22px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        @keyframes aparecer {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -40%);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        /* Pulsar após construção */
+        .pulsar {
+            animation: pulsar 1.5s ease-in-out infinite;
+            animation-delay: 4s;
+        }
+
+        @keyframes pulsar {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        /* Partículas */
+        .particula {
+            position: absolute;
+            font-size: 25px;
+            pointer-events: none;
+            animation: voar 3s ease-out forwards;
+        }
+
+        @keyframes voar {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) rotate(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--x), var(--y)) rotate(360deg);
+            }
+        }
+
+        /* Botão reiniciar */
+        .botao-reiniciar {
+            position: absolute;
+            left: -200px;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 15px 30px;
+            background: white;
+            color: #764ba2;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            opacity: 0;
+        }
+
+        .botao-reiniciar.mostrar {
+            animation: aparecer-botao 1s ease-out forwards;
+            animation-delay: 4s;
+        }
+
+        .botao-reiniciar:hover {
+            transform: translateY(-50%) translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            background: #ff0844;
+            color: white;
+        }
+
+        @keyframes aparecer-botao {
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Tela inicial -->
+        <div class="mensagem-inicial" id="telaInicial">
+            <h1 style="margin-bottom: 20px;">💝 lembrancinha 💝</h1>
+            <button class="botao-iniciar" onclick="iniciarAnimacao()">
+                Começar
+            </button>
+        </div>
+
+        <!-- Container do coração -->
+        <div class="svg-container" id="coracaoContainer">
+            <svg width="500" height="500" viewBox="0 0 400 400" id="svgCoracao">
+                <path id="coracaoPath" class="coracao-path" d="M200,350 C200,350 50,250 50,150 C50,100 75,60 115,60 C145,60 170,80 200,110 C230,80 255,60 285,60 C325,60 350,100 350,150 C350,250 200,350 200,350 Z" fill="#87CEEB" stroke="#ff0000" stroke-width="3"/>
+            </svg>
+
+            <div class="texto-coracao" id="textoCoracao">
+                <div class="nome">Maria Clara</div>
+                <div class="sobrenome">Aranibar Buzato</div>
+            </div>
+
+            <button class="botao-reiniciar" id="botaoReiniciar" onclick="reiniciar()">
+                ❤️ Ver Novamente
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let animacaoIniciada = false;
+
+        function iniciarAnimacao() {
+            if (animacaoIniciada) return;
+            animacaoIniciada = true;
+
+            // Esconder tela inicial
+            document.getElementById('telaInicial').classList.add('esconder');
+
+            // Mostrar coração após um breve delay
+            setTimeout(() => {
+                document.getElementById('telaInicial').style.display = 'none';
+                document.getElementById('coracaoContainer').classList.add('ativo');
+
+                // Iniciar desenho do coração
+                document.getElementById('coracaoPath').classList.add('animar');
+
+                // Mostrar texto
+                document.getElementById('textoCoracao').classList.add('mostrar');
+
+                // Adicionar pulsar após 4 segundos
+                setTimeout(() => {
+                    document.getElementById('svgCoracao').classList.add('pulsar');
+                }, 4000);
+
+                // Mostrar botão reiniciar
+                document.getElementById('botaoReiniciar').classList.add('mostrar');
+
+                // Criar partículas
+                criarParticulas();
+            }, 500);
+        }
+
+        function criarParticulas() {
+            const container = document.querySelector('.container');
+
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const particula = document.createElement('div');
+                    particula.className = 'particula';
+                    particula.textContent = '❤️';
+                    particula.style.left = '50%';
+                    particula.style.top = '50%';
+
+                    const angulo = (Math.PI * 2 * i) / 20;
+                    const distancia = 150 + Math.random() * 100;
+                    const x = Math.cos(angulo) * distancia;
+                    const y = Math.sin(angulo) * distancia;
+
+                    particula.style.setProperty('--x', x + 'px');
+                    particula.style.setProperty('--y', y + 'px');
+
+                    container.appendChild(particula);
+
+                    setTimeout(() => particula.remove(), 3000);
+                }, i * 200 + 3000);
+            }
+        }
+
+        function reiniciar() {
+            location.reload();
+        }
+
+        // Permitir iniciar com a tecla Enter
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !animacaoIniciada) {
+                iniciarAnimacao();
+            }
+        });
+    </script>
+</body>
+</html>
